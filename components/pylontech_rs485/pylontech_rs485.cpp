@@ -1,6 +1,11 @@
 #include "pylontech_rs485.h"
 #include "esphome/core/log.h"
 #include "esphome/components/uart/uart_component.h"
+// add lock rs232
+#include "esphome/components/globals/globals_component.h"
+
+// Mengakses langsung variabel global rs232_lock dari YAML
+extern esphome::globals::GlobalsComponent<bool> *global_rs232_lock;
 
 namespace esphome {
 namespace pylontech_rs485 {
@@ -64,6 +69,10 @@ void PylontechRS485::dump_config() {
 float PylontechRS485::get_setup_priority() const { return setup_priority::LATE; }
 
 void PylontechRS485::loop() {
+  // Cek apakah RS232 sedang mengunci proses
+  if (global_rs232_lock != nullptr && global_rs232_lock->value()) {
+    return; // Keluar dari loop, tahan pemrosesan RS485 sementara
+  }
   if (this->is_data_valid_ && (millis() - this->last_update_ms_ > this->update_timeout_ms_)) {
     ESP_LOGW(TAG, "Sensor data timeout! Halting communication to trigger fail-safe.");
     this->is_data_valid_ = false;
