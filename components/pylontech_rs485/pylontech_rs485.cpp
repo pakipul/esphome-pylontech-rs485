@@ -159,7 +159,9 @@ void PylontechRS485::route_frame_request_(const std::string &frame_str) {
   }
   std::string cid2 = frame_str.substr(7, 2);
 
-  if (cid2 == "61") {
+  if (cid2 == "60") {
+    this->handle_command_61_();
+  } else if (cid2 == "61") {
     this->handle_command_61_();
   } else if (cid2 == "62") {
     this->handle_command_62_();
