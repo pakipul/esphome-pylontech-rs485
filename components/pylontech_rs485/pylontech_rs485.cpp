@@ -71,16 +71,9 @@ float PylontechRS485::get_setup_priority() const { return setup_priority::LATE; 
 
 void PylontechRS485::loop() {
 
-// 1. Ambil pointer variabel global dari sistem ESPHome
-  if (rs232_lock_ptr == nullptr) {
-    for (auto *obj : ::esphome::App.get_globals()) {
-      rs232_lock_ptr = reinterpret_cast<esphome::globals::GlobalsComponent<bool> *>(obj);
-      break; 
-    }
-  }
-  // 2. Cek status rs232_lock
-  if (rs232_lock_ptr != nullptr && rs232_lock_ptr->value()) {
-    return; // Tahan/Lewati pemrosesan RS485 jika RS232 lock aktif
+// Cek jika lock aktif (bernilai true), tahan pemrosesan RS485 sementara
+  if (pylon_rs232_lock_ptr != nullptr && pylon_rs232_lock_ptr->value()) {
+    return;
   }
   if (this->is_data_valid_ && (millis() - this->last_update_ms_ > this->update_timeout_ms_)) {
     ESP_LOGW(TAG, "Sensor data timeout! Halting communication to trigger fail-safe.");
