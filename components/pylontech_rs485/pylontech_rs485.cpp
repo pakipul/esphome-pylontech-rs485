@@ -10,6 +10,7 @@ namespace pylontech_rs485 {
 // Pointer internal untuk menyimpan referensi variabel rs232_lock
 static esphome::globals::GlobalsComponent<bool> *rs232_lock_ptr = nullptr;
 
+
 static const char *const TAG = "pylontech_rs485";
 static const std::string PROTOCOL_VERSION = "20";
 static const std::string RESPONSE_ADDRESS = "02";
@@ -69,16 +70,14 @@ void PylontechRS485::dump_config() {
 float PylontechRS485::get_setup_priority() const { return setup_priority::LATE; }
 
 void PylontechRS485::loop() {
-  // 1. Cari objek 'rs232_lock' dari App registry secara otomatis saat pertama kali berjalan
+
+// 1. Ambil pointer variabel global dari sistem ESPHome
   if (rs232_lock_ptr == nullptr) {
-    for (auto *obj : App.get_globals()) {
-      // Mencocokkan nama / ID objek variabel global
-      // ESPHome menyimpan pointer ke semua komponen globals di App
+    for (auto *obj : ::esphome::App.get_globals()) {
       rs232_lock_ptr = reinterpret_cast<esphome::globals::GlobalsComponent<bool> *>(obj);
       break; 
     }
   }
-
   // 2. Cek status rs232_lock
   if (rs232_lock_ptr != nullptr && rs232_lock_ptr->value()) {
     return; // Tahan/Lewati pemrosesan RS485 jika RS232 lock aktif
