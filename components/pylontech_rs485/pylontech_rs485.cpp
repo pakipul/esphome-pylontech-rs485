@@ -73,6 +73,7 @@ void PylontechRS485::loop() {
 
 // 2. Gunakan nama yang SAMA EXACT: pylon_rs232_lock_ptr
   if (pylon_rs232_lock_ptr != nullptr && pylon_rs232_lock_ptr->value()) {
+    ESP_LOGW(TAG, "RS232 port active. Setting RS485 status to pass process.");
     return; // Tahan proses RS485 jika RS232 lock sedang aktif (true)
   }
   if (this->is_data_valid_ && (millis() - this->last_update_ms_ > this->update_timeout_ms_)) {
