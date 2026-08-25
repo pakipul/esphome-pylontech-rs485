@@ -8,7 +8,7 @@
 
 namespace esphome {
 namespace pylontech_rs485 {
-extern esphome::globals::GlobalsComponent<bool> *pylon_rs232_lock_ptr;
+
 class PylontechRS485 : public Component, public uart::UARTDevice {
  public:
   // --- Standard ESPHome component functions ---
