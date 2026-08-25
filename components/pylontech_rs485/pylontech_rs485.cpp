@@ -7,10 +7,6 @@
 namespace esphome {
 namespace pylontech_rs485 {
 
-// 1. Deklarasi pointer global dalam namespace
-esphome::globals::GlobalsComponent<bool> *pylon_rs232_lock_ptr = nullptr;
-
-
 static const char *const TAG = "pylontech_rs485";
 static const std::string PROTOCOL_VERSION = "20";
 static const std::string RESPONSE_ADDRESS = "02";
@@ -71,11 +67,6 @@ float PylontechRS485::get_setup_priority() const { return setup_priority::LATE; 
 
 void PylontechRS485::loop() {
 
-// 2. Gunakan nama yang SAMA EXACT: pylon_rs232_lock_ptr
-  if (pylon_rs232_lock_ptr != nullptr && pylon_rs232_lock_ptr->value()) {
-    ESP_LOGW(TAG, "RS232 port active. Setting RS485 status to pass process.");
-    return; // Tahan proses RS485 jika RS232 lock sedang aktif (true)
-  }
   if (this->is_data_valid_ && (millis() - this->last_update_ms_ > this->update_timeout_ms_)) {
     ESP_LOGW(TAG, "Sensor data timeout! Halting communication to trigger fail-safe.");
     this->is_data_valid_ = false;
